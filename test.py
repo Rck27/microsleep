@@ -15,6 +15,7 @@ def get_mediapipe_app(
         refine_landmarks=True,
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5,
+
 ):
     """Initialize and return Mediapipe FaceMesh Solution Graph object"""
     face_mesh = mp.solutions.face_mesh.FaceMesh(
