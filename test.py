@@ -15,7 +15,6 @@ def get_mediapipe_app(
         refine_landmarks=True,
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5,
-
 ):
     """Initialize and return Mediapipe FaceMesh Solution Graph object"""
     face_mesh = mp.solutions.face_mesh.FaceMesh(
@@ -245,8 +244,7 @@ class DrowsinessDetector:
 
             # Plot EAR and Drowsy Time text
             EAR_txt = f"EAR: {round(EAR, 2)}"
-            DROWSY_TIME_txt = f"DROWSY: {round(self.state_tracker['DROWSY_TIME'], 3)} Secs \n"
-            print(DROWSY_TIME_txt)
+            DROWSY_TIME_txt = f"DROWSY: {round(self.state_tracker['DROWSY_TIME'], 3)} Secs"
             frame_copy = plot_text(frame_copy, EAR_txt, self.EAR_txt_pos, self.state_tracker["COLOR"])
             frame_copy = plot_text(frame_copy, DROWSY_TIME_txt, DROWSY_TIME_txt_pos, self.state_tracker["COLOR"])
 
@@ -287,8 +285,7 @@ def main():
         processed_frame = detector.process_frame(frame)
 
         # Display the processed frame
-        # cv2.imshow('Drowsiness Detection', processed_frame)
-
+        cv2.imshow('Drowsiness Detection', processed_frame)
 
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
