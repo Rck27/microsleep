@@ -10,6 +10,8 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from mediapipe.python.solutions.drawing_utils import _normalized_to_pixel_coordinates as denormalize_coordinates
 
+
+
 try:
     with open('microsleep.json', 'r') as cred_file:
         cred_data = json.load(cred_file)
@@ -172,6 +174,10 @@ class DrowsinessDetector:
             alarm_path (str): Path to the alarm sound file
             firestore_cred_path (str): Path to Firebase credentials JSON file
         """
+
+        #initiate gpio 2 for output and set to 0
+        os.system("gpio mode 2 out \ gpio write 2 0")
+
         # Landmarks indices
         self.eye_idxs = {
             "left": [362, 385, 387, 263, 373, 380],
@@ -324,7 +330,7 @@ class DrowsinessDetector:
                 # Increase DROWSY_TIME to track the time period
                 # and reset the start_time for the next iteration.
                 end_time = time.perf_counter()
-
+                isAlarmOn = False
                 self.state_tracker["DROWSY_TIME"] += end_time - self.state_tracker["start_time"]
                 self.state_tracker["start_time"] = end_time
                 self.state_tracker["COLOR"] = self.RED
@@ -332,7 +338,13 @@ class DrowsinessDetector:
                 if self.state_tracker["DROWSY_TIME"] >= self.wait_time:
                     self.state_tracker["play_alarm"] = True
                     frame_copy = plot_text(frame_copy, "WAKE UP! WAKE UP", ALM_txt_pos, self.state_tracker["COLOR"])
-
+                    if not isAlarmOn:
+                        os.system("gpio write 2 1")
+                        isAlarmOn = not isAlarmOn
+                    else:
+                        os.system("gpio write 2 0")
+                        isAlarmOn = not isAlarmOn
+                              
                     # Play alarm sound if available
                     if self.alarm_sound and not pygame.mixer.get_busy():
                         self.alarm_sound.play()
@@ -347,6 +359,7 @@ class DrowsinessDetector:
                 self.state_tracker["COLOR"] = self.GREEN
                 self.state_tracker["play_alarm"] = False
                 self.state_tracker["microsleep_logged"] = False
+                os.system()
 
             # Plot EAR and MOR texts
             EAR_txt = f"EAR: {round(EAR, 2)}"
@@ -364,7 +377,8 @@ class DrowsinessDetector:
             self.state_tracker["COLOR"] = self.GREEN
             self.state_tracker["play_alarm"] = False
             self.state_tracker["microsleep_logged"] = False
-
+            os.system("gpio write 2 0")
+            isAlarmOn = 0
             # Flip the frame horizontally for a selfie-view display.
             frame_copy = cv2.flip(frame_copy, 1)
 
