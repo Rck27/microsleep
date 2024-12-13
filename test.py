@@ -341,8 +341,10 @@ class DrowsinessDetector:
                     if not isAlarmOn:
                         os.system("gpio write 2 1")
                         isAlarmOn = not isAlarmOn
+                        print(f"alarm f is {isAlarmOn}\n")
                     else:
                         os.system("gpio write 2 0")
+                        print(f"alarm {isAlarmOn}\n")
                         isAlarmOn = not isAlarmOn
                               
                     # Play alarm sound if available
@@ -359,7 +361,9 @@ class DrowsinessDetector:
                 self.state_tracker["COLOR"] = self.GREEN
                 self.state_tracker["play_alarm"] = False
                 self.state_tracker["microsleep_logged"] = False
-                os.system()
+                os.system("gpio write 2 0")
+                isAlarmOn = 0
+                print("Alarm is off")
 
             # Plot EAR and MOR texts
             EAR_txt = f"EAR: {round(EAR, 2)}"
